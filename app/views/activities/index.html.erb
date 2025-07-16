@@ -1,0 +1,56 @@
+<% content_for :title, "Activities" %>
+
+<h1>Atividades</h1>
+
+<p style="color: green"><%= notice %></p>
+
+<div style="margin-bottom: 1em; display: flex; justify-content: space-between">
+  <%= link_to "Nova atividade", new_activity_path, class: "btn btn-primary" %>
+
+  <button>Filtrar</button>
+</div>
+
+<div style="overflow-x: auto; border: 1px solid #ccc; border-radius: 6px;">
+  <table style="width: 100%; min-width: 1000px; border-collapse: collapse;">
+    <thead style="background-color: #f2f2f2;">
+      <tr>
+        <th style="padding: 8px; text-align: left;">ID</th>
+        <th style="padding: 8px; text-align: left;">Título</th>
+        <th style="padding: 8px; text-align: left;">Descrição</th>
+        <th style="padding: 8px; text-align: left;">Status</th>
+        <th style="padding: 8px; text-align: left;">Início</th>
+        <th style="padding: 8px; text-align: left;">Término</th>
+        <th style="padding: 8px; text-align: left;">Tipo</th>
+        <th style="padding: 8px; text-align: left;">% Completo</th>
+        <th style="padding: 8px; text-align: left;">Prioridade</th>
+        <th style="padding: 8px; text-align: left;">Urgência</th>
+        <th style="padding: 8px; text-align: left;">Pontos</th>
+        <th style="padding: 8px; text-align: left;">Responsável</th>
+        <th style="padding: 8px; text-align: left;">Ações</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @activities.each do |activity| %>
+        <tr style="border-top: 1px solid #ddd;">
+          <td style="padding: 8px;"><%= activity.id %></td>
+          <td style="padding: 8px;"><%= activity.title %></td>
+          <td style="padding: 8px;"><%= truncate(activity.description, length: 50) %></td>
+          <td style="padding: 8px;"><%= activity.status ? '✅' : '❌' %></td>
+          <td style="padding: 8px;"><%= activity.start_date %></td>
+          <td style="padding: 8px;"><%= activity.end_date %></td>
+          <td style="padding: 8px;"><%= activity.kind_value %></td>
+          <td style="padding: 8px;"><%= activity.completed_percent %> %</td>
+          <td style="padding: 8px;"><%= activity.priority %></td>
+          <td style="padding: 8px;"><%= activity.urgency_value %></td>
+          <td style="padding: 8px;"><%= activity.points %></td>
+          <td style="padding: 8px;"><%= activity.user_id %></td>
+          <td style="padding: 8px;">
+            <%= link_to 'Show', activity, style: "margin-right: 6px;" %>
+            <%= link_to 'Edit', edit_activity_path(activity), style: "margin-right: 6px;" %>
+            <%= link_to 'Delete', activity, method: :delete, data: { confirm: 'Tem certeza?' }, style: "color: red;" %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

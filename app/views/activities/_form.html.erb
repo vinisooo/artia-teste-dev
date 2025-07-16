@@ -1,0 +1,67 @@
+<%= form_with(model: activity) do |form| %>
+  <% if activity.errors.any? %>
+    <div style="color: red">
+      <h2><%= pluralize(activity.errors.count, "error") %> prohibited this activity from being saved:</h2>
+
+      <ul>
+        <% activity.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div>
+    <%= form.label :title, style: "display: block" %>
+    <%= form.text_field :title %>
+  </div>
+
+  <div>
+    <%= form.label :description, style: "display: block" %>
+    <%= form.text_field :description %>
+  </div>
+
+  <div>
+    <%= form.label :status, style: "display: block" %>
+    <%= form.checkbox :status %>
+  </div>
+
+  <div>
+    <%= form.label :start_date, style: "display: block" %>
+    <%= form.date_field :start_date %>
+  </div>
+
+  <div>
+    <%= form.label :end_date, style: "display: block" %>
+    <%= form.date_field :end_date %>
+  </div>
+
+  <div>
+    <%= form.label :kind, style: "display: block" %>
+    <%= form.number_field :kind %>
+  </div>
+
+  <div>
+    <%= form.label :completed_percent, style: "display: block" %>
+    <%= form.text_field :completed_percent %>
+  </div>
+
+  <div>
+    <%= form.label :priority, style: "display: block" %>
+    <%= form.number_field :priority %>
+  </div>
+
+  <div>
+    <%= form.label :urgency, style: "display: block" %>
+    <%= form.number_field :urgency %>
+  </div>
+
+  <div>
+    <%= form.label :points, style: "display: block" %>
+    <%= form.number_field :points %>
+  </div>
+
+  <div>
+    <%= form.submit %>
+  </div>
+<% end %>

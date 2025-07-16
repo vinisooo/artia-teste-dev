@@ -1,0 +1,25 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  title: MyString
+  description: MyString
+  status: false
+  start_date: 2025-07-16 13:19:56
+  end_date: 2025-07-16 13:19:56
+  kind: 1
+  completed_percent: 1.5
+  priority: 1
+  urgency: 1
+  points: 1
+
+two:
+  title: MyString
+  description: MyString
+  status: false
+  start_date: 2025-07-16 13:19:56
+  end_date: 2025-07-16 13:19:56
+  kind: 1
+  completed_percent: 1.5
+  priority: 1
+  urgency: 1
+  points: 1
