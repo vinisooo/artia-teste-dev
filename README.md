@@ -1,5 +1,5 @@
 # Executar o projeto
 
-´´´bash
+```bash
 make docker
-´´´
+```
