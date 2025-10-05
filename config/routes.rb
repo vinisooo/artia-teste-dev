@@ -1,5 +1,10 @@
 Rails.application.routes.draw do
   root "activities#index"
+  
+  get 'activities/filter_group', to: 'activity_filters#new_group'
+  get 'activities/filter_condition', to: 'activity_filters#new_condition'
+  get '/activities/filter_condition', to: 'activity_filters#filter_condition'
+  
   resources :activities
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 

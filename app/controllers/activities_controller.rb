@@ -4,6 +4,18 @@ class ActivitiesController < ApplicationController
   # GET /activities or /activities.json
   def index
     @activities = Activity.all.order(:start_date)
+    @filters = { operator: 'AND', groups: [] }
+    
+    Rails.logger.info "PARAMS: #{params.to_unsafe_h}"
+
+    if params[:groups].present?
+      
+      @activities = ActivityFilterBuilder.new(@activities, @filters).apply if @filters[:groups].any? { |g| g[:filters].any? }
+    end
+
+    @filter_groups = [
+      FilterGroup.new(filters: [FilterCondition.new], operator: nil)
+    ]
   end
 
   # GET /activities/1 or /activities/1.json

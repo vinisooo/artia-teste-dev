@@ -1,0 +1,25 @@
+<%= form_with url: activities_path, method: :get, data: { controller: "filter" } do |f| %>
+  <div id="filter-groups-container" data-filter-target="container">
+    <% @filter_groups.each_with_index do |group, group_index| %>
+      <%= render "activities/filter/filter_group", 
+            group: group, 
+            group_index: group_index, 
+            group_operator: @group_operator %>
+    <% end %>
+  </div>
+
+  <div class="modal-footer">
+    <div class="d-flex w-100 justify-content-between">
+      <button type="button" class="btn btn-outline-secondary btn-sm" data-action="filter#addGroup">
+        +  Adicionar grupo
+      </button>
+
+      <div class="d-flex gap-2">
+        <button type="button" class="btn btn-outline-secondary btn-sm border-0" data-action="filter#clearFilters">
+          Limpar filtros
+        </button>
+        <%= submit_tag "Aplicar filtros", class: "btn btn-primary" %>
+      </div>
+    </div>
+  </div>
+<% end %>

@@ -7,7 +7,20 @@
 <div style="margin-bottom: 1em; display: flex; justify-content: space-between">
   <%= link_to "Nova atividade", new_activity_path, class: "btn btn-primary" %>
 
-  <button>Filtrar</button>
+  <!-- Botão que abre o modal -->
+  <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#filterModal">
+    Filtrar
+  </button>
+
+  <%= render partial: "shared/modal",
+    locals: { 
+      modal_id: "filterModal",
+      title: "Filtrar indicador",
+      body: "activities/filter/activity_filter",
+      body_locals: { groups: @filter_groups, group_operator: @filters[:operator] },
+      width: "80%"
+    } %>
+
 </div>
 
 <div style="overflow-x: auto; border: 1px solid #ccc; border-radius: 6px;">

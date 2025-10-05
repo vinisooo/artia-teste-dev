@@ -8,3 +8,20 @@
  *
  * Consider organizing styles into separate files for maintainability.
  */
+
+ .btn-primary {
+  background-color: #34bbbe;
+  border: #34bbbe;
+
+  transition: 0.3s ease;
+  &:hover {
+    background-color: #34bbbe;
+    opacity: 0.8;
+  }
+ }
+ .material-symbols-outlined {
+  font-variation-settings: 'FILL' 0,
+  'wght' 400,
+  'GRAD' 0,
+  'opsz' 24
+}

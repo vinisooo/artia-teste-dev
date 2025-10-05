@@ -1,0 +1,37 @@
+<div class="filter-group mb-3 row" data-group-index="<%= group_index %>">
+  <div class="col-2">
+    <% if group_index.zero? %>
+      <p class="pt-3">Onde</p>
+    <% elsif group_index == 1 %>
+      <select 
+        name="group_operator"
+        class="form-select"
+        data-action="change->filter#toggleGroupOperator"
+        data-filter-target="groupOperatorSelect"
+        data-group-index="<%= group_index %>"
+      >
+        <option value="AND" <%= 'selected' if group_operator == 'AND' %>>E</option>
+        <option value="OR" <%= 'selected' if group_operator == 'OR' %>>Ou</option>
+      </select>
+    <% else %>
+      <p style="text-align: center;" data-filter-target="groupOperatorDisplay"><%= group_operator %></p>
+    <% end %>
+  </div>
+
+  <div class=" col position-relative rounded" style="background-color: #edf2f7;">
+    <div class="conditions-container">
+      <% group.filters.each_with_index do |condition, condition_index| %>
+        <%= render "activities/filter/filter_condition", 
+              condition: condition, 
+              group_index: group_index, 
+              condition_index: condition_index %>
+      <% end %>
+    </div>
+
+    <button type="button" class="btn btn-outline-secondary mt-2 mb-3 add-condition fs-6 border-0" 
+            data-action="filter#addCondition" 
+            data-group-index="<%= group_index %>">
+      + Adicionar filtro agrupado
+    </button>
+  </div>
+</div>
