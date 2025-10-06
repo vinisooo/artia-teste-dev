@@ -10,7 +10,8 @@ module ActivityFiltersHelper
       "completed_percent" => "Percentual concluído",
       "priority" => "Prioridade",
       "urgency" => "Urgência",
-      "points" => "Pontos"
+      "points" => "Pontos",
+      "user" => "Responsável"
     }[field]
   end
 
@@ -33,6 +34,7 @@ module ActivityFiltersHelper
       "priority" => "number",
       "urgency" => "select",
       "points" => "number"
+      "user" => "select"
     }[field]
   end
 

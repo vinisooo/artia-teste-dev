@@ -1,0 +1,7 @@
+<%= turbo_stream.append "group-#{@group_index}-conditions" do %>
+  <%= render "activities/filter/filter_condition",
+        condition: @condition,
+        group_index: @group_index,
+        condition_index: @filter_groups[@group_index].filters.size - 1,
+        operator: @filter_groups[@group_index].operator %>
+<% end %>

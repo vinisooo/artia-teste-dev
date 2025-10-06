@@ -1,0 +1,6 @@
+<%= turbo_stream.append "filter-groups-container" do %>
+  <%= render "activities/filter/filter_group",
+        group: @filter_groups.last,
+        group_index: @group_index,
+        group_operator: params[:operator] || 'AND' %>
+<% end %>

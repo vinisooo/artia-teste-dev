@@ -13,7 +13,13 @@
           <option value="OR" <%= 'selected' if (defined?(group) && group.operator == 'OR') || operator == 'OR' %>>Ou</option>
         </select>
       <% else %>
-        <p data-target="operatorDisplay" data-group-index="<% group_index %>"><%= operator.presence || '—' %></p>
+        <p 
+        data-filter-target="operatorDisplay" 
+           data-condition-index="<%= condition_index %>"
+           data-group-index="<%= group_index %>"
+        >
+          <%= operator.presence || '—' %>
+          </p>
       <% end %>
     </div>
 

@@ -9,7 +9,7 @@ class ActivitiesController < ApplicationController
     Rails.logger.info "PARAMS: #{params.to_unsafe_h}"
 
     if params[:groups].present?
-      
+
       @activities = ActivityFilterBuilder.new(@activities, @filters).apply if @filters[:groups].any? { |g| g[:filters].any? }
     end
 
