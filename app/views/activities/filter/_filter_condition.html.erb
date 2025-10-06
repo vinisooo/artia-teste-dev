@@ -24,7 +24,7 @@
     </div>
 
     <div class="col">
-      <% fields = %w[title description status start_date end_date kind completed_percent priority urgency points user] %>
+      <% fields = %w[title description status start_date end_date kind completed_percent priority urgency points user_id] %>
       <%= select_tag "groups[#{group_index}][filters][#{condition_index}][field]",
             options_for_select(fields.map { |f| [field_label(f), f] }, condition.field),
             include_blank: "Selecione o campo",

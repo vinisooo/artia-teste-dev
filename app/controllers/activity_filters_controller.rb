@@ -31,17 +31,4 @@ class ActivityFiltersController < ApplicationController
              operator: @group.operator
            }
   end
-
-  def filter_condition
-    @group_index = params[:group_index]
-    @condition_index = params[:condition_index]
-    @condition = FilterCondition.new(field: params[:field], value: [])
-  
-    respond_to do |format|
-      format.turbo_stream do
-        render partial: "activities/filter/filter_condition", 
-               locals: { condition: @condition, group_index: @group_index, condition_index: @condition_index }
-      end
-    end
-  end  
 end

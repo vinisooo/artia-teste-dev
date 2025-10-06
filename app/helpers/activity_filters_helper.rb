@@ -11,7 +11,7 @@ module ActivityFiltersHelper
       "priority" => "Prioridade",
       "urgency" => "Urgência",
       "points" => "Pontos",
-      "user" => "Responsável"
+      "user_id" => "Responsável"
     }[field]
   end
 
@@ -34,13 +34,13 @@ module ActivityFiltersHelper
       "priority" => "number",
       "urgency" => "select",
       "points" => "number",
-      "user" => "select"
+      "user_id" => "select"
     }[field]
   end
 
   def field_options(field)
     field = field.to_s
-    if field == "user"
+    if field == "user_id"
       User.all.map { |user| { value: user.id, label: user.name } }
     else
       {

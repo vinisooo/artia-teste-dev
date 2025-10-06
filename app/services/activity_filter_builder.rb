@@ -7,22 +7,15 @@ class ActivityFilterBuilder
   def apply
     return @scope if @filters_params.blank? || @filters_params[:groups].blank?
 
-    # Get global operators
-    group_operator = (@filters_params[:group_operator] || "AND").upcase
-    condition_operator = (@filters_params[:condition_operator] || "AND").upcase
+    group_operator = (@filters_params[:operator] || "AND").upcase
 
-    # Monta a expressão completa de todos os grupos
     clauses = []
 
     @filters_params[:groups].each do |group|
-      group_clause = build_group_clause(group, condition_operator)
+      group_clause = build_group_clause(group)
       next if group_clause.blank?
 
-      # adiciona operador entre grupos (global)
-      if clauses.any?
-        clauses << group_operator
-      end
-
+      clauses << group_operator if clauses.any?
       clauses << "(#{group_clause})"
     end
 
@@ -32,9 +25,11 @@ class ActivityFilterBuilder
 
   private
 
-  def build_group_clause(group, condition_operator)
+  def build_group_clause(group)
     filters = group[:filters] || []
     return nil if filters.empty?
+
+    condition_operator = (group[:operator] || "AND").upcase
 
     clauses = []
 
@@ -44,11 +39,7 @@ class ActivityFilterBuilder
       clause = build_filter_clause(filter)
       next if clause.blank?
 
-      # adiciona operador entre condições (global)
-      if clauses.any?
-        clauses << condition_operator
-      end
-
+      clauses << condition_operator if clauses.any?
       clauses << clause
     end
 

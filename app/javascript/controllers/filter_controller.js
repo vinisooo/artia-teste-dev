@@ -187,4 +187,9 @@ export default class extends Controller {
       display.textContent = select.value === "AND" ? "E" : "Ou"
     })
   }
+
+  clearFilters() {
+    this.containerTarget.querySelectorAll('.filter-group').forEach(group => group.remove())
+    this.addGroup()
+  }
 }

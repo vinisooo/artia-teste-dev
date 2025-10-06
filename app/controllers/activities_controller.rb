@@ -7,17 +7,55 @@ class ActivitiesController < ApplicationController
     @activities = Activity.all.order(:start_date)
     @filters = { operator: 'AND', groups: [] }
     
-    Rails.logger.info "PARAMS: #{params.to_unsafe_h}"
-
-    if params[:groups].present?
-
-      @activities = ActivityFilterBuilder.new(@activities, @filters).apply if @filters[:groups].any? { |g| g[:filters].any? }
+    begin
+      if params[:groups].present?
+        groups = params.require(:groups).values.map do |group_params|
+          {
+            operator: group_params[:operator] || 'AND',
+            filters: (group_params[:filters] || {}).values.map do |filter_params|
+              {
+                field: filter_params[:field],
+                value: Array(filter_params[:value]).reject(&:blank?)
+              }
+            end
+          }
+        end
+        @filters[:groups] = groups
+      elsif params[:filters].present?
+        @filters = params.require(:filters).permit(
+          :operator,
+          groups: [
+            :operator,
+            { filters: [:field, { value: [] }] }
+          ]
+        ).to_h.deep_symbolize_keys
+      end
+    rescue => e
+      Rails.logger.error "Erro ao montar filtros: #{e.message}"
+      Rails.logger.error e.backtrace.join("\n")
     end
 
-    @filter_groups = [
-      FilterGroup.new(filters: [FilterCondition.new], operator: nil)
-    ]
-  end
+    if @filters[:groups].present? && @filters[:groups].any? { |g| g[:filters].present? }
+      @activities = ActivityFilterBuilder.new(@activities, @filters).apply
+    end
+
+    @filter_groups = if @filters[:groups].present? && @filters[:groups].any? { |g| g[:filters].present? }
+      @filters[:operator] = @filters[:operator] || 'AND'
+      @filters[:groups].map do |group|
+        FilterGroup.new(
+          operator: group[:operator] || 'AND',
+          filters: group[:filters].map do |filter|
+            FilterCondition.new(
+              field: filter[:field],
+              value: filter[:value]
+            )
+          end
+        )
+      end
+    else
+      [FilterGroup.new(filters: [FilterCondition.new], operator: 'AND')]
+    end
+  end  
 
   # GET /activities/1 or /activities/1.json
   def show
