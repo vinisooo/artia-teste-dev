@@ -1,4 +1,5 @@
 class ActivitiesController < ApplicationController
+  include ActivityFiltersHelper
   before_action :set_activity, only: %i[ show edit update destroy ]
 
   # GET /activities or /activities.json
