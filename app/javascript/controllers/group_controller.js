@@ -7,54 +7,65 @@ export default class extends Controller {
     this.refreshConditions(this.element)
   }
 
-  refreshConditions(groupElement, addCondition = false) {
+  refreshConditions(groupElement) {
     const groupIndex = groupElement.dataset.groupIndex
-    const conditionsContainer = groupElement.querySelector(".conditions-container")
-    const conditionCount = conditionsContainer.querySelectorAll(".filter-condition").length
 
-    fetch(`/activities/filter_condition?group_index=${groupIndex}&condition_index=${conditionCount}`)
-      .then(response => response.text())
-      .then(html => {
-        if (addCondition) {
-          conditionsContainer.insertAdjacentHTML("beforeend", html)
-        }
-        const conditionsOperator = groupElement.querySelector(`[name="groups[${groupIndex}][operator]"]`)?.value || 'OR'
-        this.reindexConditions(groupElement, conditionsOperator)
-      })
+    const conditionsOperator =
+      groupElement.querySelector(`[name="groups[${groupIndex}][operator]"]`)
+        ?.value || "OR"
+    this.reindexConditions(groupElement, conditionsOperator)
   }
 
   addCondition(event) {
     const groupElement = event.currentTarget.closest(".filter-group")
-    const conditionsContainer = groupElement.querySelector(".conditions-container")
-    const conditionCount = conditionsContainer.querySelectorAll(".filter-condition").length
+    const groupIndex = groupElement.dataset.groupIndex
+    const conditionsContainer = groupElement.querySelector(
+      ".conditions-container"
+    )
+    const conditionCount =
+      conditionsContainer.querySelectorAll(".filter-condition").length
 
-    if(conditionCount >= 4) {
-      alert('Maximo de 4 filtros agrupados permitidos')
+    if (conditionCount >= 4) {
+      alert("Maximo de 4 filtros agrupados permitidos")
       return
     }
-    this.refreshConditions(groupElement, true)
+
+    fetch(
+      `/activities/filter_condition?group_index=${groupIndex}&condition_index=${conditionCount}`
+    )
+      .then((response) => response.text())
+      .then((html) => {
+        conditionsContainer.insertAdjacentHTML("beforeend", html)
+        this.refreshConditions(groupElement)
+      })
   }
 
   removeCondition(event) {
     const groupElement = event.currentTarget.closest(".filter-group")
-    const conditionsContainer = groupElement.querySelector(".conditions-container")
+    const conditionsContainer = groupElement.querySelector(
+      ".conditions-container"
+    )
     const groupIndex = groupElement.dataset.groupIndex
 
-    const conditionsOperator = groupElement.querySelector(`[name="groups[${groupIndex}][operator]"]`)?.value || 'OR'
+    const conditionsOperator =
+      groupElement.querySelector(`[name="groups[${groupIndex}][operator]"]`)
+        ?.value || "OR"
 
     if (conditionsContainer.querySelectorAll(".filter-condition").length > 1) {
       event.currentTarget.closest(".filter-condition").remove()
       this.reindexConditions(groupElement, conditionsOperator)
     } else {
       groupElement.remove()
-      document.dispatchEvent(new CustomEvent('group:removed', {
-        detail: { groupIndex: groupIndex }
-      }))
+      document.dispatchEvent(
+        new CustomEvent("group:removed", {
+          detail: { groupIndex: groupIndex },
+        })
+      )
     }
   }
 
-  reindexConditions(group, operator = 'OR') {
-    if(!group) return
+  reindexConditions(group, operator = "OR") {
+    if (!group) return
     const groupIndex = group.dataset.groupIndex
     const conditions = group.querySelectorAll(".filter-condition")
 
@@ -76,8 +87,12 @@ export default class extends Controller {
             data-action="change->group#toggleConditionOperator"
             data-group-index="${groupIndex}"
           >
-            <option value="AND" ${operator === 'AND' ? 'selected' : ''}>E</option>
-            <option value="OR" ${operator === 'OR' ? 'selected' : ''}>Ou</option>
+            <option value="AND" ${
+              operator === "AND" ? "selected" : ""
+            }>E</option>
+            <option value="OR" ${
+              operator === "OR" ? "selected" : ""
+            }>Ou</option>
           </select>
         `
       } else {
@@ -101,15 +116,17 @@ export default class extends Controller {
       `.filter-condition[data-group-index='${groupIndex}'] [data-filter-target='operatorDisplay']`
     )
 
-    groupConditions.forEach(display => {
+    groupConditions.forEach((display) => {
       display.textContent = select.value === "AND" ? "E" : "Ou"
     })
   }
 
   getOperatorLabel(operator) {
-    return {
-      'AND': 'E',
-      'OR': 'Ou'
-    }[operator] || 'E'
+    return (
+      {
+        AND: "E",
+        OR: "Ou",
+      }[operator] || "E"
+    )
   }
 }
