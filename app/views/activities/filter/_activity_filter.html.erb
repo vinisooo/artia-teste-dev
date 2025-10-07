@@ -1,10 +1,12 @@
 <%= form_with url: activities_path, method: :get, data: { controller: "filter" } do |f| %>
+  <%= f.hidden_field :operator, value: @filters[:operator] || 'AND', name: "filters[operator]" %>
+
   <div id="filter-groups-container" data-filter-target="container">
     <% @filter_groups.each_with_index do |group, group_index| %>
-      <%= render "activities/filter/filter_group", 
-            group: group, 
-            group_index: group_index, 
-            group_operator: @group_operator %>
+      <%= render "activities/filter/filter_group",
+            group: group,
+            group_index: group_index,
+            group_operator: @filters[:operator] || 'AND' %>
     <% end %>
   </div>
 

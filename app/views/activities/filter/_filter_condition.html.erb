@@ -1,5 +1,5 @@
 <div class="filter-condition mb-2 p-3" 
-     data-controller="filter"
+     data-controller="condition"
      data-group-index="<%= group_index %>"
      data-condition-index="<%= condition_index %>">
 
@@ -8,7 +8,7 @@
       <% if condition_index.zero? %>
         <p>Onde</p>
       <% elsif condition_index == 1 %>
-        <select name="groups[<%= group_index %>][operator]" class="form-select" data-action="change->filter#toggleConditionOperator">
+        <select name="groups[<%= group_index %>][operator]" class="form-select" data-action="change->condition#toggleConditionOperator">
           <option value="AND" <%= 'selected' if (defined?(group) && group.operator == 'AND') || operator == 'AND' %>>E</option>
           <option value="OR" <%= 'selected' if (defined?(group) && group.operator == 'OR') || operator == 'OR' %>>Ou</option>
         </select>
@@ -30,26 +30,26 @@
             include_blank: "Selecione o campo",
             class: "form-select",
             data: { 
-              action: "change->filter#toggleField",
-              filter_target: "fieldSelect"
+              action: "change->condition#toggleField",
+              condition_target: "fieldSelect"
             } %>
     </div>
 
-    <div class="col" data-filter-target="valueWrapper">
+    <div class="col" data-condition-target="valueWrapper">
       <% fields.each do |f| %>
-        <div data-filter-target="inputWrapper" data-field="<%= f %>" class="d-none">
+        <div data-condition-target="inputWrapper" data-field="<%= f %>" class="d-none">
           <% type = field_type(f) rescue 'text' %>
 
           <% if type == "text" %>
-            <%= text_field_tag "groups[#{group_index}][filters][#{condition_index}][value][]", "", class: "form-control", placeholder: "Valor do campo" %>
+            <%= text_field_tag "groups[#{group_index}][filters][#{condition_index}][value][]", condition.value&.first, class: "form-control", placeholder: "Valor do campo" %>
           <% elsif type == "number" %>
-            <%= number_field_tag "groups[#{group_index}][filters][#{condition_index}][value][]", "", class: "form-control", placeholder: "Valor do campo" %>
+            <%= number_field_tag "groups[#{group_index}][filters][#{condition_index}][value][]", condition.value&.first, class: "form-control", placeholder: "Valor do campo" %>
           <% elsif type == "date" %>
-            <%= date_field_tag "groups[#{group_index}][filters][#{condition_index}][value][]", "", class: "form-control" %>
+            <%= date_field_tag "groups[#{group_index}][filters][#{condition_index}][value][]", condition.value&.first, class: "form-control" %>
           <% elsif type == "select" %>
           <%= select_tag(
             "groups[#{group_index}][filters][#{condition_index}][value][]",
-            options_for_select(field_options(f)&.map { |opt| [opt[:label], opt[:value]] }),
+            options_for_select(field_options(f)&.map { |opt| [opt[:label], opt[:value]] }, condition.value&.first),
             class: "form-select"
           ) %>
         <% end %>
@@ -58,7 +58,7 @@
     </div>
 
     <div class="col-auto">
-      <button type="button" class="btn btn-sm remove-condition" data-action="filter#removeCondition">
+      <button type="button" class="btn btn-sm remove-condition" data-action="group#removeCondition">
         <span class="material-symbols-outlined fs-6 text-center color-secondary">delete</span>
       </button>
     </div>

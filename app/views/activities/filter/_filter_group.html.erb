@@ -1,4 +1,4 @@
-<div class="filter-group mb-3 row" data-group-index="<%= group_index %>">
+<div class="filter-group mb-3 row" data-controller="group" data-group-index="<%= group_index %>">
   <div class="col-2">
     <% if group_index.zero? %>
       <p class="pt-3">Onde</p>
@@ -6,7 +6,7 @@
       <select 
         name="group_operator"
         class="form-select"
-        data-action="change->filter#toggleGroupOperator"
+        data-action="change->group#toggleConditionOperator"
         data-filter-target="groupOperatorSelect"
         data-group-index="<%= group_index %>"
       >
@@ -30,7 +30,7 @@
     </div>
 
     <button type="button" class="btn btn-outline-secondary mt-2 mb-3 add-condition fs-6 border-0" 
-            data-action="filter#addCondition" 
+            data-action="group#addCondition" 
             data-group-index="<%= group_index %>">
       + Adicionar filtro agrupado
     </button>

@@ -1,14 +1,16 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = [
-    "container", "fieldSelect", "valueWrapper", 
-    "inputWrapper", "operatorSelect", "groupOperatorSelect", "groupOperatorDisplay",
-    "operatorDisplay"
-  ]
+  static targets = ["container", "groupOperatorSelect", "groupOperatorDisplay"]
   groupOperator = 'AND'
 
   connect() {
+    document.addEventListener('group:removed', this.handleGroupRemoved.bind(this))
+    this.reindexGroups(this.containerTarget)
+  }
+
+  handleGroupRemoved(event) {
+    this.reindexGroups(this.containerTarget)
   }
 
   getOperatorLabel(operator) {
@@ -25,7 +27,7 @@ export default class extends Controller {
       return
     }
     
-    fetch(`/activities/filter_group?index=${groupCount}`)
+    fetch(`/activities/filter_group?index=${groupCount}&global_operator=${this.groupOperator}`)
       .then(response => response.text())
       .then(html => {
         this.containerTarget.insertAdjacentHTML("beforeend", html)
@@ -73,96 +75,6 @@ export default class extends Controller {
     })
   }
 
-  reindexConditions(group, operator = 'OR') {
-    if(!group) return
-    const groupIndex = group.dataset.groupIndex
-    const conditions = group.querySelectorAll(".filter-condition")
-  
-      conditions.forEach((condition, index) => {
-        condition.dataset.conditionIndex = index
-  
-        const operatorCol = condition.querySelector(".col")
-        if (!operatorCol) return
-  
-        operatorCol.innerHTML = ""
-  
-        if (index === 0) {
-          operatorCol.innerHTML = `<p>Onde</p>`
-        } else if (index === 1) {
-          operatorCol.innerHTML = `
-            <select 
-              name="groups[${groupIndex}][operator]"
-              class="form-select"
-              data-action="change->filter#toggleConditionOperator"
-              data-group-index="${groupIndex}"
-            >
-              <option value="AND" ${operator === 'AND' ? 'selected' : ''}>E</option>
-              <option value="OR" ${operator === 'OR' ? 'selected' : ''}>Ou</option>
-            </select>
-          `
-        } else {
-          operatorCol.innerHTML = `
-            <p 
-              data-filter-target="operatorDisplay"
-              data-condition-index="${index}"
-              data-group-index="${groupIndex}"
-            >${this.getOperatorLabel(operator)}</p>
-          `
-        }
-      })
-  }
-
-  addCondition(event) {
-    const groupElement = event.currentTarget.closest(".filter-group")
-    const groupIndex = groupElement.dataset.groupIndex
-    const conditionsContainer = groupElement.querySelector(".conditions-container")
-    const conditionCount = conditionsContainer.querySelectorAll(".filter-condition").length
-
-    if(conditionCount >= 4) {
-      alert('Maximo de 4 filtros agrupados permitidos')
-      return
-    }
-
-    fetch(`/activities/filter_condition?group_index=${groupIndex}&condition_index=${conditionCount}`)
-      .then(response => response.text())
-      .then(html => {
-        conditionsContainer.insertAdjacentHTML("beforeend", html)
-        const conditionsOperator = groupElement.querySelector(`[name="groups[${groupIndex}][operator]"]`)?.value
-        this.reindexConditions(groupElement, conditionsOperator)
-      })
-  }
-
-  removeCondition(event) {
-    const groupElement = event.currentTarget.closest(".filter-group")
-    const conditionsContainer = groupElement.querySelector(".conditions-container")
-    const groupIndex = groupElement.dataset.groupIndex
-    const root = groupElement.parentElement
-
-    const conditionsOperator = groupElement.querySelector(`[name="groups[${groupIndex}][operator]"]`)?.value
-
-    if (conditionsContainer.querySelectorAll(".filter-condition").length > 1) {
-      event.currentTarget.closest(".filter-condition").remove()
-      this.reindexConditions(groupElement, conditionsOperator)
-    } else {
-      groupElement.remove()
-      this.reindexGroups(root)
-    }
-  }  
-
-  toggleField(event) {
-    const selected = event ? event.target.value : this.fieldSelectTarget.value
-
-    this.inputWrapperTargets.forEach(wrapper => {
-      if (wrapper.dataset.field === selected) {
-        wrapper.classList.remove("d-none")
-      } else {
-        wrapper.classList.add("d-none")
-        const input = wrapper.querySelector("input, select")
-        if(input) input.value = ""
-      }
-    })
-  }
-
   toggleGroupOperator(event) {
     const select = event.target
     const value = select.value
@@ -172,20 +84,11 @@ export default class extends Controller {
     displays.forEach(display => {
       display.textContent = value === "AND" ? "E" : "Ou"
     })
-  }
-  
-  toggleConditionOperator(event) {
-    const select = event.target
-    const groupIndex = select.closest("[data-group-index]")?.dataset.groupIndex
-    if (!groupIndex) return
-  
-    const groupConditions = document.querySelectorAll(
-      `.filter-condition[data-group-index='${groupIndex}'] [data-filter-target='operatorDisplay']`
-    )
-  
-    groupConditions.forEach(display => {
-      display.textContent = select.value === "AND" ? "E" : "Ou"
-    })
+
+    const hiddenField = document.querySelector('input[name="filters[operator]"]')
+    if (hiddenField) {
+      hiddenField.value = value
+    }
   }
 
   clearFilters() {

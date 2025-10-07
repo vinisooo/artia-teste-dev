@@ -7,14 +7,12 @@ class ActivityFilterBuilder
   def apply
     return @scope if @filters_params.blank? || @filters_params[:groups].blank?
 
-    # Monta a expressão completa de todos os grupos
     clauses = []
 
     @filters_params[:groups].each do |group|
       group_clause = build_group_clause(group)
       next if group_clause.blank?
 
-      # adiciona operador entre grupos se existir
       if group[:operator].present? && clauses.any?
         clauses << group[:operator].upcase
       end

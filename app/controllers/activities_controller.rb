@@ -8,6 +8,10 @@ class ActivitiesController < ApplicationController
     @filters = { operator: 'AND', groups: [] }
     
     begin
+      if params[:filters].present? && params[:filters][:operator].present?
+        @filters[:operator] = params[:filters][:operator]
+      end
+
       if params[:groups].present?
         groups = params.require(:groups).values.map do |group_params|
           {
@@ -31,7 +35,6 @@ class ActivitiesController < ApplicationController
         ).to_h.deep_symbolize_keys
       end
     rescue => e
-      Rails.logger.error "Erro ao montar filtros: #{e.message}"
       Rails.logger.error e.backtrace.join("\n")
     end
 
@@ -55,7 +58,7 @@ class ActivitiesController < ApplicationController
     else
       [FilterGroup.new(filters: [FilterCondition.new], operator: 'AND')]
     end
-  end  
+  end
 
   # GET /activities/1 or /activities/1.json
   def show
