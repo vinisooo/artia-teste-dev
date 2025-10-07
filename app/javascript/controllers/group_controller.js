@@ -3,9 +3,28 @@ import { Controller } from "@hotwired/stimulus"
 export default class extends Controller {
   static targets = ["operatorSelect", "operatorDisplay", "container"]
 
+  connect() {
+    this.refreshConditions(this.element)
+  }
+
+  refreshConditions(groupElement, addCondition = false) {
+    const groupIndex = groupElement.dataset.groupIndex
+    const conditionsContainer = groupElement.querySelector(".conditions-container")
+    const conditionCount = conditionsContainer.querySelectorAll(".filter-condition").length
+
+    fetch(`/activities/filter_condition?group_index=${groupIndex}&condition_index=${conditionCount}`)
+      .then(response => response.text())
+      .then(html => {
+        if (addCondition) {
+          conditionsContainer.insertAdjacentHTML("beforeend", html)
+        }
+        const conditionsOperator = groupElement.querySelector(`[name="groups[${groupIndex}][operator]"]`)?.value || 'OR'
+        this.reindexConditions(groupElement, conditionsOperator)
+      })
+  }
+
   addCondition(event) {
     const groupElement = event.currentTarget.closest(".filter-group")
-    const groupIndex = groupElement.dataset.groupIndex
     const conditionsContainer = groupElement.querySelector(".conditions-container")
     const conditionCount = conditionsContainer.querySelectorAll(".filter-condition").length
 
@@ -13,14 +32,7 @@ export default class extends Controller {
       alert('Maximo de 4 filtros agrupados permitidos')
       return
     }
-
-    fetch(`/activities/filter_condition?group_index=${groupIndex}&condition_index=${conditionCount}`)
-      .then(response => response.text())
-      .then(html => {
-        conditionsContainer.insertAdjacentHTML("beforeend", html)
-        const conditionsOperator = groupElement.querySelector(`[name="groups[${groupIndex}][operator]"]`)?.value || 'OR'
-        this.reindexConditions(groupElement, conditionsOperator)
-      })
+    this.refreshConditions(groupElement, true)
   }
 
   removeCondition(event) {
